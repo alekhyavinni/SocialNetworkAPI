@@ -30,4 +30,24 @@ const thoughtController = {
             res.sendStatus(400);
           });
     },
+     // Update Thought By Id
+     updateThought({ params, body }, res) {
+        Thought.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
+          .then(dbUserData => {
+            if (!dbUserData) {
+              res.status(404).json({ message: 'No Thought found with this id!' });
+              return;
+            }
+            res.json(dbUserData);
+          })
+          .catch(err => res.json(err));
+    },
+
+    //Delete Thought By Id
+    deleteThought({ params }, res) {
+        Thought.findOneAndDelete({ _id: params.id })
+          .then(dbUserData => res.json(dbUserData))
+          .catch(err => res.json(err));
+    },
+
 }
