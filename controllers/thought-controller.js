@@ -49,5 +49,26 @@ const thoughtController = {
           .then(dbUserData => res.json(dbUserData))
           .catch(err => res.json(err));
     },
+ //Add Reaction to the Thought
+ addReaction({ params, body }, res) {
+    Thought.findOneAndUpdate(
+      { _id: params.thoughtId },
+      { $addToSet: { reactions: body } },
+      { new: true }
+    )
+    .then((dbUserData) => res.json(dbUserData))
+    .catch((err) => res.status(400).json(err));
+},
 
+//Delete Reaction from a Thought
+deleteReaction({ params }, res) {
+    Thought.findOneAndUpdate(
+      { _id: params.thoughtId },
+      { $pull: { reactions: { reactionId: params.reactionId } } },
+      { new: true }
+    )
+      .then((dbUserData) => res.json(dbUserData))
+      .catch((err) => res.json(err));
+  },
 }
+
