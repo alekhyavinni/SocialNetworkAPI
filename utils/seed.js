@@ -1,43 +1,111 @@
-const connection = require('../config/connection');
-const { User, Video } = require('../models');
-const { getRandomName, getRandomVideos } = require('./data');
+// Imports
+const { User, Thought } = require("../models");
+const mongoose = require("mongoose");
 
-connection.on('error', (err) => err);
+const connection = require("../config/connection");
 
-connection.once('open', async () => {
-  console.log('connected');
-  // Delete the collections if they exist
-  let videoCheck = await connection.db.listCollections({ name: 'videos' }).toArray();
-  if (videoCheck.length) {
-    await connection.dropCollection('videos');
-  }
+// Seed data
+const users = [
+  {
+    username: "Ryan",
+    email: "ryan@gmail.com",
+    thoughts: [],
+  },
+  {
+    username: "minni",
+    email: "minni@gmail.com",
+    thoughts: [],
+  },
+  {
+    username: "alekhya",
+    email: "alekhya@gmail.com",
+    thoughts: [],
+  },
+  {
+    username: "chinnu",
+    email: "chinnu@gmail.com",
+    thoughts: [],
+  },
+  {
+    username: "uki",
+    email: "uki@gmail.com",
+    thoughts: [],
+  },
+  {
+    username: "toby",
+    email: "toby@gmail.com",
+    thoughts: [],
+  },
+  {
+    username: "rishi",
+    email: "rishi@gmail.com",
+    thoughts: [],
+  },
+  {
+    username: "daisy",
+    email: "daisy@gmail.com",
+    thoughts: [],
+  },
 
-  let userCheck = await connection.db.listCollections({ name: 'users' }).toArray();
-  if (userCheck.length) {
-    await connection.dropCollection('users');
-  }
+];
 
-  const users = [];
-  const videos = getRandomVideos(10);
+const thoughts=[
+    {
+        thoughtText:"How to make money on the App Store",
+        username:"alekhya",
+        reactions:[],
+    },
+    {
+        thoughtText:"How to disagree with someone",
+        username:"chinnu",
+        reactions:[],
+    },
+    {
+        thoughtText:"Submission for startup pitch",
+        username:"uki",
+        reactions:[],
+    },
+    {
+        thoughtText:"I love choclates",
+        username:"toby",
+        reactions:[],
+    },
+    {
+        thoughtText:"i am an Artist",
+        username:"rishi",
+        reactions:[],
+    },
+    {
+        thoughtText:"Like and subscribe to my channel please",
+        username:"daisy",
+        reactions:[],
+    },
+     {
+        thoughtText:"I am obsessed with yippie",
+        username:"minni",
+        reactions:[],
+    }
 
-  for (let i = 0; i < 20; i++) {
-    const fullName = getRandomName();
-    const first = fullName.split(' ')[0];
-    const last = fullName.split(' ')[1];
 
-    users.push({
-      first,
-      last,
-      age: Math.floor(Math.random() * (99 - 18 + 1) + 18),
-    });
-  }
+]
 
+console.log(connection);
+
+// Connects to server
+connection.once("open", async () => {
+  console.log("connected");
+
+  // Drop existing students
+  await User.deleteMany({});
+  await Thought.deleteMany({})
+
+  // Adds seed data to database
   await User.collection.insertMany(users);
-  await Video.collection.insertMany(videos);
+  await Thought.collection.insertMany(thoughts)
 
-  // loop through the saved videos, for each video we need to generate a video response and insert the video responses
+
   console.table(users);
-  console.table(videos);
-  console.info('Seeding complete! 🌱');
+  console.table(thoughts)
+  console.info("Seeding complete! 🌱");
   process.exit(0);
 });
