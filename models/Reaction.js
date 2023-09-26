@@ -1,0 +1,34 @@
+const {Schema,Types} = require('mongoose')
+
+// Schema to create Reactions model
+// Reaction is a subdocument of Thought
+const ReactionSchema = new Schema({
+    reactionId: {
+        type: Schema.Types.ObjectId,
+        // default value is set to a new ObjectId
+        default: () => new Types.ObjectId()
+    },
+    reactionBody: {
+        type: String,
+        required: true,
+        maxlength: 280
+    },
+    username: {
+        type: String,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        get: (createdAtVal) => moment(createdAtVal).format('MM DD, YYYY [at] hh:mm a')
+    }
+},
+
+    {
+        toJSON: {
+            getters: true
+        }
+    });
+
+    const Reaction = model('Reaction', ReactionSchema);
+    module.exports = Reaction;
