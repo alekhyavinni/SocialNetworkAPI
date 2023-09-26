@@ -1,24 +1,21 @@
-// Require express and mongoose
-const express = require('express');
-const mongoose = require('mongoose');
+// Imports
+const express = require("express");
+const db = require("./config/connection");
+const routes = require("./routes");
 
-const app = express();
+const cwd = process.cwd();
+
 const PORT = process.env.PORT || 3001;
+const app = express();
 
-app.use(express.json());
+// Middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.json());
+app.use(routes);
 
-app.use(require('./routes'));
-
-// tells mongoose which database to connect to 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/SocialNetworkAPI', {
-
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+// Allows server to listen for requests and send responses
+db.once("open", () => {
+  app.listen(PORT, () => {
+    console.log(`API server running on port ${PORT}!`);
+  });
 });
-
-// Use this to log mongo queries being executed!
-mongoose.set('debug', true);
-
-app.listen(PORT, () => console.log(`Connected on localhost:${PORT}`));
